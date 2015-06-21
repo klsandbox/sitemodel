@@ -19,7 +19,12 @@ class SiteModelServiceProvider extends ServiceProvider {
      * @return void
      */
     public function register() {
-        //
+        
+        $this->app->singleton('command.klsandbox.siteappend', function($app) {
+            return new SiteAppend();
+        });
+        
+        $this->commands('command.klsandbox.siteappend');
     }
 
     /**
@@ -28,7 +33,9 @@ class SiteModelServiceProvider extends ServiceProvider {
      * @return array
      */
     public function provides() {
-        return [];
+        return [
+            'command.klsandbox.siteappend',
+        ];
     }
 
     public function boot() {
