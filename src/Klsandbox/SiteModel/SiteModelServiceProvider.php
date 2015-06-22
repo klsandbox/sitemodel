@@ -19,12 +19,20 @@ class SiteModelServiceProvider extends ServiceProvider {
      * @return void
      */
     public function register() {
-        
+
         $this->app->singleton('command.klsandbox.siteappend', function($app) {
             return new SiteAppend();
         });
-        
+
         $this->commands('command.klsandbox.siteappend');
+
+        $models = \Config::get('site.models');
+
+        foreach ($models as $model) {
+            app('events')->listen('eloquent.creating: ' . $model, function($item) {
+                $item->site_id = Site::id();
+            });
+        }
     }
 
     /**
@@ -42,10 +50,10 @@ class SiteModelServiceProvider extends ServiceProvider {
         $this->publishes([
             __DIR__ . '/../../../database/migrations/' => database_path('/migrations')
                 ], 'migrations');
-        
+
         $this->publishes([
             __DIR__ . '/../../../config/' => config_path()
                 ], 'config');
-
     }
+
 }

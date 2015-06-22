@@ -38,16 +38,23 @@ class SiteAppend extends Command {
 
         // TODO: Doesnt handle ondelete and onupdate
         $this->comment("site:append");
-
+        
+        $models = Config::get('site.models');
+        
+        $tables = array_map(function ($e) {
+            $model = new $e();
+            
+            return $model->getTable();
+            
+        }, $models);
+        
         $writeToFile = true;
         $file = [];
 
         $anyTableHasData = false;
 
         if ($writeToFile) {
-            array_push($file, "
-                
-                <?php
+            array_push($file, "<?php
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -64,7 +71,7 @@ class AppendSite extends Migration {
         }
 
 
-        foreach (Config::get('site.tables') as $tableName) {
+        foreach ($tables as $tableName) {
             $indexList = DB::select(DB::raw("SHOW INDEXES FROM $tableName WHERE NOT Non_unique and Key_Name <> 'PRIMARY' and Key_name not like '%site_id%'"));
 
             $indexGroup = collect($indexList)->groupBy(function ($e) {
@@ -188,7 +195,8 @@ and TABLE_NAME = '$tableName' and CONSTRAINT_SCHEMA = 'raniagold'"));
                                     ");
                 }
 
-                array_push($tableData, "});");
+                array_push($tableData, "});
+");
 
                 if ($tableHasData) {
                     $anyTableHasData = true;
