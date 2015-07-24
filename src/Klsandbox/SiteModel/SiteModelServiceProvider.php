@@ -28,6 +28,12 @@ class SiteModelServiceProvider extends ServiceProvider {
 
         $models = \Config::get('site.models');
 
+        if (!$models)
+        {
+            \Log::warning("No models configured");
+            return;
+        }
+        
         foreach ($models as $model) {
             app('events')->listen('eloquent.creating: ' . $model, function($item) {
                 $item->site_id = Site::id();
