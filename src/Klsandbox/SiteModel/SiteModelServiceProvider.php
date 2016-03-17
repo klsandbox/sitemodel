@@ -60,6 +60,14 @@ class SiteModelServiceProvider extends ServiceProvider {
         $this->publishes([
             __DIR__ . '/../../../config/' => config_path()
                 ], 'config');
+
+        foreach (config('site.models') as $siteClass)
+        {
+            if (!class_exists($siteClass))
+            {
+                \App::abort(500, 'Class not found');
+            }
+        }
     }
 
 }
