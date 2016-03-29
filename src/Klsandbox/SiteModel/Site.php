@@ -39,19 +39,19 @@ class Site extends Model {
     }
 
     public static function setSiteByHost($host) {
-        $site = Site::firstByAttributes(['host' => $host]);
+        $site = Site::where(['host' => $host])->first();
         if ($site) {
             self::setSite($site);
         }
     }
 
     public static function DevSite() {
-        $site = Site::firstByAttributes(['Status' => 'Dev']);
+        $site = Site::where(['Status' => 'Dev'])->first();
         return $site;
     }
 
     public static function ProdSite() {
-        $site = Site::firstByAttributes(['Status' => 'Production']);
+        $site = Site::where(['Status' => 'Production'])->first();
         return $site;
     }
 
