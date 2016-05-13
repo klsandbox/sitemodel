@@ -25,6 +25,7 @@ use Config;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Site whereDescription($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Site whereHost($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Site whereStatus($value)
+ * @mixin \Eloquent
  */
 class Site extends Model {
 
