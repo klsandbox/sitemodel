@@ -8,8 +8,8 @@ use DB;
 use Config;
 use Schema;
 
-class SiteAppend extends Command {
-
+class SiteAppend extends Command
+{
     /**
      * The console command name.
      *
@@ -29,25 +29,25 @@ class SiteAppend extends Command {
      *
      * @return void
      */
-    public function fire() {
-
+    public function fire()
+    {
         $now = new \Carbon\Carbon();
         $str = $now->toDateTimeString();
         $str = preg_replace('/\-| /', '_', $str);
         $str = preg_replace('/:/', '', $str);
 
         // TODO: Doesnt handle ondelete and onupdate
-        $this->comment("site:append");
-        
+        $this->comment('site:append');
+
         $models = Config::get('site.models');
-        
+
         $tables = array_map(function ($e) {
             $model = new $e();
-            
+
             return $model->getTable();
-            
+
         }, $models);
-        
+
         $writeToFile = true;
         $file = [];
 
@@ -69,7 +69,6 @@ class AppendSite extends Migration {
     public function up() {
 ");
         }
-
 
         foreach ($tables as $tableName) {
             $indexList = DB::select(DB::raw("SHOW INDEXES FROM $tableName WHERE NOT Non_unique and Key_Name <> 'PRIMARY' and Key_name not like '%site_id%'"));
@@ -95,7 +94,7 @@ and TABLE_NAME = '$tableName' and CONSTRAINT_SCHEMA = 'raniagold'"));
             $command = $this;
 
             if (!$writeToFile) {
-                Schema::table($tableName, function(Blueprint $table) use ($indexGroup, $tableName, $foreignKeys, $command) {
+                Schema::table($tableName, function (Blueprint $table) use ($indexGroup, $tableName, $foreignKeys, $command) {
                     $command->comment("Table $tableName");
 
                     if (!Schema::hasColumn($tableName, 'site_id')) {
@@ -108,7 +107,6 @@ and TABLE_NAME = '$tableName' and CONSTRAINT_SCHEMA = 'raniagold'"));
 
                         $list = ['site_id'];
                         foreach ($index as $i) {
-
                             if (array_has($foreignKeys, $i->Column_name)) {
                                 $fk = $foreignKeys[$i->Column_name];
                                 $table->dropForeign($fk->CONSTRAINT_NAME);
@@ -129,19 +127,18 @@ and TABLE_NAME = '$tableName' and CONSTRAINT_SCHEMA = 'raniagold'"));
                             }
                         }
 
-                        $command->comment("Add " . implode(',', $list));
+                        $command->comment('Add ' . implode(',', $list));
                         $table->unique($list);
                     }
                 });
             } else {
-
                 $tableData = [];
                 $tableHasData = false;
 
                 array_push($tableData, "
                 Schema::table('$tableName', function(Blueprint \$table) {
                 ");
-                
+
                 if (!Schema::hasColumn($tableName, 'site_id')) {
                     $tableHasData = true;
                     array_push($tableData, "
@@ -156,7 +153,6 @@ and TABLE_NAME = '$tableName' and CONSTRAINT_SCHEMA = 'raniagold'"));
 
                     $list = ['site_id'];
                     foreach ($index as $i) {
-
                         if (array_has($foreignKeys, $i->Column_name)) {
                             $fk = $foreignKeys[$i->Column_name];
                             array_push($tableData, "
@@ -184,19 +180,19 @@ and TABLE_NAME = '$tableName' and CONSTRAINT_SCHEMA = 'raniagold'"));
                         }
                     }
 
-                    $command->comment("Add " . implode(',', $list));
+                    $command->comment('Add ' . implode(',', $list));
 
-                    $param = "[" . implode(',', array_map(function ($e) {
+                    $param = '[' . implode(',', array_map(function ($e) {
                                         return "'$e'";
-                                    }, $list)) . "]";
+                                    }, $list)) . ']';
 
                     array_push($tableData, "
                         \$table->unique($param);
                                     ");
                 }
 
-                array_push($tableData, "});
-");
+                array_push($tableData, '});
+');
 
                 if ($tableHasData) {
                     $anyTableHasData = true;
@@ -227,8 +223,7 @@ and TABLE_NAME = '$tableName' and CONSTRAINT_SCHEMA = 'raniagold'"));
             $this->comment("Writting to $path");
             file_put_contents($path, $file);
         } else {
-            $this->comment("No data to write");
+            $this->comment('No data to write');
         }
     }
-
 }

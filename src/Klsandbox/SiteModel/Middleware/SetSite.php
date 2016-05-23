@@ -7,12 +7,12 @@ use Klsandbox\SiteModel\Site;
 
 class SetSite
 {
-
     /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \Closure $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -21,6 +21,7 @@ class SetSite
         $site = Site::setSiteByHost($host);
 
         $response = $next($request);
+
         return $response;
     }
 }

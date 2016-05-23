@@ -4,8 +4,8 @@ namespace Klsandbox\SiteModel;
 
 use Illuminate\Support\ServiceProvider;
 
-class SiteModelServiceProvider extends ServiceProvider {
-
+class SiteModelServiceProvider extends ServiceProvider
+{
     /**
      * Indicates if loading of the provider is deferred.
      *
@@ -18,9 +18,9 @@ class SiteModelServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    public function register() {
-
-        $this->app->singleton('command.klsandbox.siteappend', function($app) {
+    public function register()
+    {
+        $this->app->singleton('command.klsandbox.siteappend', function ($app) {
             return new SiteAppend();
         });
 
@@ -28,14 +28,14 @@ class SiteModelServiceProvider extends ServiceProvider {
 
         $models = \Config::get('site.models');
 
-        if (!$models)
-        {
-            \Log::warning("No models configured");
+        if (!$models) {
+            \Log::warning('No models configured');
+
             return;
         }
-        
+
         foreach ($models as $model) {
-            app('events')->listen('eloquent.creating: ' . $model, function($item) {
+            app('events')->listen('eloquent.creating: ' . $model, function ($item) {
                 $item->site_id = Site::id();
             });
         }
@@ -46,28 +46,27 @@ class SiteModelServiceProvider extends ServiceProvider {
      *
      * @return array
      */
-    public function provides() {
+    public function provides()
+    {
         return [
             'command.klsandbox.siteappend',
         ];
     }
 
-    public function boot() {
+    public function boot()
+    {
         $this->publishes([
-            __DIR__ . '/../../../database/migrations/' => database_path('/migrations')
+            __DIR__ . '/../../../database/migrations/' => database_path('/migrations'),
                 ], 'migrations');
 
         $this->publishes([
-            __DIR__ . '/../../../config/' => config_path()
+            __DIR__ . '/../../../config/' => config_path(),
                 ], 'config');
 
-        foreach (config('site.models') as $siteClass)
-        {
-            if (!class_exists($siteClass))
-            {
+        foreach (config('site.models') as $siteClass) {
+            if (!class_exists($siteClass)) {
                 \App::abort(500, 'Class not found');
             }
         }
     }
-
 }
