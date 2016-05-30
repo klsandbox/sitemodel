@@ -38,7 +38,7 @@ class Site extends Model
     public static function setSite($site)
     {
         assert($site);
-        
+
         self::$siteId = $site->id;
         self::$siteKey = $site->key;
     }
