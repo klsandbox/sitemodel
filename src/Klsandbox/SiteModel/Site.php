@@ -17,7 +17,6 @@ use Config;
  * @property string $description
  * @property string $host
  * @property string $status
- *
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Site whereId($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Site whereCreatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Site whereUpdatedAt($value)
