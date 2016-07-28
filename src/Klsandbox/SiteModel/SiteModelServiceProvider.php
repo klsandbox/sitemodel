@@ -33,12 +33,6 @@ class SiteModelServiceProvider extends ServiceProvider
 
             return;
         }
-
-        foreach ($models as $model) {
-            app('events')->listen('eloquent.creating: ' . $model, function ($item) {
-                $item->site_id = Site::id();
-            });
-        }
     }
 
     /**
